@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Record System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fdf6e3;
+            color: #333;
+            padding: 20px;
+        }
+        h2 {
+            color: #6b4226;
+        }
+        .container {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        .menu {
+            flex: 1;
+        }
+        .form-area {
+            flex: 3;
+        }
+        select, input[type="text"], input[type="number"] {
+            padding: 5px;
+            margin: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #a67c52;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #8b5e3c;
+        }
+        .form-section {
+            display: none;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #e6ccb2;
+        }
+    </style>
+    <script>
+        function showForm() {
+            const selected = document.getElementById("action").value;
+            const sections = document.querySelectorAll(".form-section");
+            sections.forEach(sec => sec.style.display = "none");
+            if (selected) {
+                document.getElementById(selected).style.display = "block";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Student Record System</h2>
+    <div class="container">
+        <div class="menu">
+            <label for="action">Choose Action:</label><br>
+            <select id="action" onchange="showForm()">
+                <option value="">--Select--</option>
+                <option value="addForm">Add Student</option>
+                <option value="viewTable">View All</option>
+                <option value="sortForm">Sort Students</option>
+                <option value="deleteForm">Delete Student</option>
+            </select>
+        </div>
+
+        <div class="form-area">
+            <!-- Add Student -->
+            <div id="addForm" class="form-section">
+                <h3>Add Student</h3>
+                <form action="/add" method="post">
+                    <input type="number" name="roll_no" placeholder="Roll No" required>
+                    <input type="text" name="name" placeholder="Name" required>
+                    <input type="text" name="grade" placeholder="Grade" required>
+                    <input type="number" name="marks" placeholder="Marks" required>
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+
+            <!-- Sort Students -->
+            <div id="sortForm" class="form-section">
+                <h3>Sort Students</h3>
+                <form action="/" method="get">
+                    <select name="sort_by">
+                        <option value="roll_no">Roll No</option>
+                        <option value="name">Name</option>
+                        <option value="grade">Grade</option>
+                        <option value="marks">Marks</option>
+                    </select>
+                    <button type="submit">Sort</button>
+                </form>
+            </div>
+
+            <!-- Delete Student -->
+            <div id="deleteForm" class="form-section">
+                <h3>Delete Student</h3>
+                <form action="/delete" method="post">
+                    <input type="number" name="roll_no" placeholder="Roll No to Delete" required>
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+
+            <!-- View All Students -->
+            <div id="viewTable" class="form-section">
+                <h3>All Students</h3>
+                {% if students %}
+                <table>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Grade</th>
+                        <th>Marks</th>
+                        <th>Update</th>
+                    </tr>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student[0] }}</td>
+                        <td>{{ student[1] }}</td>
+                        <td>{{ student[2] }}</td>
+                        <td>{{ student[3] }}</td>
+                        <td>
+                            <form action="/update" method="post">
+                                <input type="hidden" name="roll_no" value="{{ student[0] }}">
+                                <input type="number" name="marks" placeholder="New Marks" required>
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <p>No students found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
